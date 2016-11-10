@@ -23,7 +23,11 @@ router.post('/create', function(req, res, next) {
 	
 	keys.create(req.body.name, req.body.description)
 		.then(key => {
-			res.send(key);
+			// res.send(key);
+			res.render('present', { 
+				title: 'Key generated',
+				key 
+			});
 		})
 		.catch(err => {
 			res.status(500);
