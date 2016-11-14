@@ -37,8 +37,29 @@ router.post('/create', function(req, res, next) {
 
 });
 
-router.get('/revoke', function(req, res, next) {
-	res.render('index', { title: 'Express' });
+router.get('/revoke', function(req, res) {
+	res.render('revoke', { title: 'Revoke a key' });
 });
+
+router.post('/revoke', function(req, res){
+
+	keys.destroy(req.body.key)
+		.then(result => {
+			res.render('message', {
+				title : 'Token revoked',
+				body : 'The token has been successfully revoked'
+			});
+		})
+		.catch(err => {
+			debug(err);
+			res.status(500);
+			res.json(err);
+			// res.render('err', {
+			// 	message : `An error occurred while your key was being revoked. It may still be valid.`
+			// })
+		})
+	;
+
+})
 
 module.exports = router;

@@ -1,3 +1,4 @@
+const debug = require('debug')('bin:lib:keys');
 const uuid = require('uuid').v4;
 
 const database = require('./database');
@@ -32,6 +33,28 @@ function checkKey(key){
 }
 
 function destroyKey(key){
+
+	if(!key){
+		throw `A key was not passed to the function`;
+	}
+
+	debug("Got here");
+
+	return database.read({key : key}, process.env.HERODOTUS_KEYS_TABLE)
+		.then(data => {
+			debug(data);
+			if(data.Item !== undefined){
+
+				const item = data.Item;
+				item.revoked = true;
+
+				return database.write(item, process.env.HERODOTUS_KEYS_TABLE);
+
+			} else {
+				throw `The key passed does not exist in our database`;
+			}
+		})
+	;
 
 }
 
