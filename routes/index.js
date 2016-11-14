@@ -14,7 +14,20 @@ router.get('/generate', function(req, res, next) {
 });
 
 router.post('/check', function(req, res, next) {
-	res.render('index', { title: 'Express' });
+	keys.check(req.body.key)
+		.then(isValid => {
+			if(isValid){
+				res.status(200);
+			} else {
+				res.status(498);
+			}			
+			res.end();
+		})
+		.catch(err => {
+			res.status(400);
+			res.end();
+		})
+	;
 });
 
 router.post('/create', function(req, res, next) {

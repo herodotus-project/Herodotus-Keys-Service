@@ -30,6 +30,27 @@ function createKey(name, description){
 
 function checkKey(key){
 
+	if(!key){
+		throw `A key was not passed to the function`;
+	}
+
+	return database.read({key : key},  process.env.HERODOTUS_KEYS_TABLE)
+		.then(data => {
+			if(data.Item !== undefined){
+
+				if(data.Item.revoked === undefined || data.Item.revoked === false){
+					return true;
+				} else {
+					// Key is revoked
+					return false;
+				}
+
+			} else {
+				throw "Key not found";
+			}
+		})
+	;
+
 }
 
 function destroyKey(key){
@@ -37,8 +58,6 @@ function destroyKey(key){
 	if(!key){
 		throw `A key was not passed to the function`;
 	}
-
-	debug("Got here");
 
 	return database.read({key : key}, process.env.HERODOTUS_KEYS_TABLE)
 		.then(data => {
