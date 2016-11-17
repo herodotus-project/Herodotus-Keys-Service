@@ -15,8 +15,11 @@ function createKey(name, description){
 		description
 	};
 
+	debug(`Creating key...`);
+
 	return database.write(keyEntry, process.env.HERODOTUS_KEYS_TABLE)
 		.then(result => {
+			debug(`Key was successfully created and stored`);
 			return keyEntry.key;
 		})
 		.catch(err => {
@@ -33,6 +36,8 @@ function checkKey(key){
 	if(!key){
 		throw `A key was not passed to the function`;
 	}
+
+	debug(`Checking key...`);
 
 	return database.read({key : key},  process.env.HERODOTUS_KEYS_TABLE)
 		.then(data => {
@@ -59,6 +64,8 @@ function destroyKey(key){
 		throw `A key was not passed to the function`;
 	}
 
+	debug(`Destroying key...`);
+
 	return database.read({key : key}, process.env.HERODOTUS_KEYS_TABLE)
 		.then(data => {
 			debug(data);
@@ -66,6 +73,8 @@ function destroyKey(key){
 
 				const item = data.Item;
 				item.revoked = true;
+
+				debug(`Key was successfully destroyed`);
 
 				return database.write(item, process.env.HERODOTUS_KEYS_TABLE);
 
