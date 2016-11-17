@@ -2,17 +2,10 @@ const debug = require('debug')('routes:index');
 const express = require('express');
 const router = express.Router();
 
+const auth = require('../bin/lib/auth');
 const keys = require('../bin/lib/keys');
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-	res.render('index', { title: 'Herodotus Keys Service' });
-});
-
-router.get('/generate', function(req, res, next) {
-	res.render('generate', { title: 'Generate a key' });
-});
-
+// Anyone can check a key
 router.post('/check', function(req, res, next) {
 	keys.check(req.body.key)
 		.then(isValid => {
@@ -30,13 +23,23 @@ router.post('/check', function(req, res, next) {
 	;
 });
 
+// Every other action needs to be authorised
+router.use(auth);
+
+router.get('/', function(req, res, next) {
+	res.render('index', { title: 'Herodotus Keys Service' });
+});
+
+router.get('/generate', function(req, res, next) {
+	res.render('generate', { title: 'Generate a key' });
+});
+
 router.post('/create', function(req, res, next) {
 
 	debug(req.body);
 	
 	keys.create(req.body.name, req.body.description)
 		.then(key => {
-			// res.send(key);
 			res.render('present', { 
 				title: 'Key generated',
 				key 
@@ -66,10 +69,9 @@ router.post('/revoke', function(req, res){
 		.catch(err => {
 			debug(err);
 			res.status(500);
-			res.json(err);
-			// res.render('err', {
-			// 	message : `An error occurred while your key was being revoked. It may still be valid.`
-			// })
+			res.render('err', {
+				message : `An error occurred while your key was being revoked. It may still be valid.`
+			});
 		})
 	;
 
