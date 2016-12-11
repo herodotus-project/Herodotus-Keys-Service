@@ -5,11 +5,6 @@ const router = express.Router();
 const auth = require('../bin/lib/auth');
 const keys = require('../bin/lib/keys');
 
-// Anyone can check a key
-router.get('/check', function(req, res, next) {
-	res.render('check', { title: 'Check a key' });
-});
-
 router.post('/check', function(req, res, next) {
 	keys.check(req.body.key)
 		.then(isValid => {
