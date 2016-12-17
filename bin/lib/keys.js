@@ -6,7 +6,9 @@ const database = require('./database');
 function createKey(name, description){
 
 	if( ( name === undefined || name === null ) || ( description === undefined || description === null ) ){
-		throw `Requirements for parameters not met. 'name' is ${name} and 'description' is ${description}`;
+		const msg = `Requirements for parameters not met. 'name' is ${name} and 'description' is ${description}`;
+		debug(msg);
+		throw msg;
 	}
 
 	const keyEntry = {

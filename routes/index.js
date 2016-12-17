@@ -37,15 +37,23 @@ router.get('/generate', function(req, res, next) {
 router.post('/create', function(req, res, next) {
 
 	debug(req.body);
+	debug(req.query.token);
 	
 	keys.create(req.body.name, req.body.description)
-		.then(key => {			
-			res.render('present', { 
-				title: 'Key generated',
-				key 
-			});
+		.then(key => {
+			if(req.query.token !== undefined){
+				res.status(200);
+				res.json({key : key});
+			} else {
+				res.render('present', { 
+					title: 'Key generated',
+					key 
+				});
+			}
+
 		})
 		.catch(err => {
+			debug(err);
 			res.status(500);
 			res.end();
 		})
