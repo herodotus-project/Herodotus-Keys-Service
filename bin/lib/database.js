@@ -1,10 +1,29 @@
-const AWS = require('aws-sdk');
+const debug = require('debug')('Morar:database');
+const AWS   = require('aws-sdk');
 AWS.config.update({region: process.env.AWS_REGION || 'us-west-2'});
 
-const Dynamo = new AWS.DynamoDB.DocumentClient();
+const Dynamo       = new AWS.DynamoDB();                // for basic table accesses
+const DynamoClient = new AWS.DynamoDB.DocumentClient(); // for metadata about a table
+
+function describeTable(table){
+	return new Promise( (resolve, reject) => {
+		if(table === undefined || table === null){
+			reject(`'table' argument is ${table}`);
+		} else {
+			Dynamo.describeTable({
+				TableName : table
+			}, (err, result) => {
+				if(err){
+					reject(err);
+				} else {				
+					resolve(result);
+				}
+			});
+		}
+	});
+}
 
 function writeToDatabase(item, table){
-
 
 	return new Promise( (resolve, reject) => {
 
@@ -12,7 +31,7 @@ function writeToDatabase(item, table){
 			reject(`'table' argument is ${table}`);
 		} else {
 			
-			Dynamo.put({
+			DynamoClient.put({
 				TableName : table,
 				Item : item
 			}, (err, result) => {
@@ -39,7 +58,7 @@ function readFromDatabase(item, table){
 			reject(`'table' argument is ${table}`);
 		} else {
 
-			Dynamo.get({
+			DynamoClient.get({
 				TableName : table,
 				Key : item
 			}, function(err, data) {
@@ -58,24 +77,82 @@ function readFromDatabase(item, table){
 }
 
 function scanDatabase(query){
+	
+	debug('Scanning database', query);
+
+	const results = [];
+
+	function scan(query){
+
+		return new Promise( (resolve, reject) => {
+
+			if(query.TableName === undefined || query.TableName === null){
+				reject(`'TableName' argument is ${query.TableName}`);
+			} else {
+
+				DynamoClient.scan(query, function(err, data){
+
+					if(err){
+						reject(err);
+					} else {
+						debug(data.Items.length);
+						results.push(data);
+						if(data.LastEvaluatedKey !== undefined){
+							query.ExclusiveStartKey = data.LastEvaluatedKey;
+							return scan(query)
+								.then(function(){
+									resolve();
+								})
+							;
+						} else {
+							resolve();
+						}
+
+					}
+
+				})
+
+			}
+
+		});
+
+	}
+
+	return scan(query)
+		.then(function(){
+
+			const totalItems = [];
+
+			results.forEach(result => {
+				result.Items.forEach(Item => {
+					totalItems.push(Item);
+				})
+			});
+
+			debug('Total number of items:', totalItems.length);
+
+			return {
+				Items : totalItems
+			};
+
+		})
+	;
+
+}
+
+function queryItemsInDatabase(options){
 
 	return new Promise( (resolve, reject) => {
 
-		if(query.TableName === undefined || query.TableName === null){
-			reject(`'TableName' argument is ${query.TableName}`);
-		} else {
-			
-			Dynamo.scan(query, function(err, data){
+		DynamoClient.query(options, (err, data) => {
 
-				if(err){
-					reject(err);
-				} else {
-					resolve(data);
-				}
+			if(err){
+				reject(err);
+			} else {
+				resolve(data);
+			}
 
-			})
-
-		}
+		});
 
 	});
 
@@ -85,7 +162,7 @@ function updateItemInDatabase(item, updateExpression, expressionValues, table){
 
 	return new Promise( (resolve, reject) => {
 
-			Dynamo.update({
+			DynamoClient.update({
 				TableName : table,
 				Key : item,
 				UpdateExpression : updateExpression,
@@ -104,8 +181,10 @@ function updateItemInDatabase(item, updateExpression, expressionValues, table){
 }
 
 module.exports = {
-	write : writeToDatabase,
-	read : readFromDatabase,
-	scan : scanDatabase,
-	update : updateItemInDatabase
+	write    : writeToDatabase,
+	read     : readFromDatabase,
+	scan     : scanDatabase,
+	query    : queryItemsInDatabase,
+	update   : updateItemInDatabase,
+	describe : describeTable
 };
