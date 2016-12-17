@@ -42,7 +42,7 @@ router.post('/create', function(req, res, next) {
 	keys.create(req.body.name, req.body.description)
 		.then(key => {
 			if(req.query.token !== undefined){
-				res.json({key : key});
+				res.send(key);
 			} else {
 				res.render('present', { 
 					title: 'Key generated',
@@ -68,10 +68,16 @@ router.post('/revoke', function(req, res){
 
 	keys.destroy(req.body.key)
 		.then(result => {
-			res.render('message', {
-				title : 'Token revoked',
-				body : 'The token has been successfully revoked'
-			});
+
+			if(req.query.token !== undefined){
+				res.end();
+			} else {
+				res.render('message', {
+					title : 'Token revoked',
+					body : 'The token has been successfully revoked'
+				});
+			}
+
 		})
 		.catch(err => {
 			debug(err);
