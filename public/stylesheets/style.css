@@ -11,10 +11,17 @@ body {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  height: auto;
+  padding-top: 50px;
+  box-sizing: border-box;
 }
 
 a {
   color: #00B7FF;
+}
+
+p{
+  line-height: 1.4em;
 }
 
 header{
@@ -68,4 +75,12 @@ form button{
   border: 1px solid black;
   background: white;
   position: relative;
+}
+
+main{
+  width: 1280px;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  height: auto;
 }

@@ -22,6 +22,7 @@ router.post('/check', function(req, res, next) {
 	;
 });
 
+
 // Every other action needs to be authorised
 router.use(auth);
 
@@ -74,6 +75,14 @@ router.post('/revoke', function(req, res){
 		})
 	;
 
-})
+});
+
+router.get('/documentation', function(req, res, next){
+
+	res.render('documentation', {
+		title : 'Documentation'
+	})
+
+});
 
 module.exports = router;
