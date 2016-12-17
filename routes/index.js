@@ -39,7 +39,7 @@ router.post('/create', function(req, res, next) {
 	debug(req.body);
 	
 	keys.create(req.body.name, req.body.description)
-		.then(key => {
+		.then(key => {			
 			res.render('present', { 
 				title: 'Key generated',
 				key 
