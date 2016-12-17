@@ -8,7 +8,7 @@ function createKey(name, description){
 	if( ( name === undefined || name === null ) || ( description === undefined || description === null ) ){
 		const msg = `Requirements for parameters not met. 'name' is ${name} and 'description' is ${description}`;
 		debug(msg);
-		throw msg;
+		throw new Error(msg);
 	}
 
 	const keyEntry = {

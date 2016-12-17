@@ -42,7 +42,6 @@ router.post('/create', function(req, res, next) {
 	keys.create(req.body.name, req.body.description)
 		.then(key => {
 			if(req.query.token !== undefined){
-				res.status(200);
 				res.json({key : key});
 			} else {
 				res.render('present', { 
