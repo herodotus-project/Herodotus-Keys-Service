@@ -13,8 +13,39 @@
 	</ul>
 
 	<p><strong>All of these endpoints are currently behind basic auth, and will require valid credentials in order to undertake these actions.</strong></p>
-	<p><em>It will soon be possible to undertake these actions using a token</em></p>
 
 	<h2>Creating a key</h2>
+
+	<div class="instructions" data-instruction="create">
+		<div><span class="httpVerb">POST</span><h3>/create</h3></div>
+		<strong>Example URL</strong>
+		<code>https://herodotus-keys-service.herokuapp.com/create?token=[VALID_HERODOTUS_KEY]</code>
+		<em>(If successful)</em><br/>
+		<strong>HTTP Status code</strong><br/>
+		<code>200</code><br/>
+		<strong>Body</strong><br/>
+		<em>This is a demo token, it is not valid</em><br/>
+		<code>82c4987b5fc949b38fba37aec6ad1aed</code><br/>
+	</div>
+
+	<h2>Revoking a key</h2>
+
+	<div class="instructions" data-instruction="revoke">
+		<div><span class="httpVerb">POST</span><h3>/revoke</h3></div>
+		<strong>Example URL</strong>
+		<code>https://herodotus-keys-service.herokuapp.com/revoke?token=[VALID_HERODOTUS_KEY]</code><br/>
+
+		<strong>Request headers</strong>
+		<code>Content-Type: application-json</code>
+		<strong>Request body</strong>
+		<code>{"key" : "KEY_TO_REVOKE"}</code>
+
+
+		<strong>HTTP Status code</strong>
+		<em>(If successful)</em><br/>
+		<code>200</code><br/>
+		<strong>Body</strong><br/>
+		<em>No body is returned for this endpoint</em><br/>
+	</div>
 
 </main>

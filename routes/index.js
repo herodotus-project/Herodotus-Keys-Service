@@ -22,7 +22,6 @@ router.post('/check', function(req, res, next) {
 	;
 });
 
-
 // Every other action needs to be authorised
 router.use(auth);
 

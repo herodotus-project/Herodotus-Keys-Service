@@ -13,6 +13,7 @@ body {
   flex-direction: column;
   height: auto;
   padding-top: 50px;
+  padding-bottom: 2em;
   box-sizing: border-box;
 }
 
@@ -34,6 +35,7 @@ header{
   align-items: center;
   height: 50px;
   background: black;
+  z-index: 500;
 }
 
 header nav{
@@ -83,4 +85,32 @@ main{
   margin-left: auto;
   margin-right: auto;
   height: auto;
+}
+
+code{
+  width: 100%;
+  clear: both;
+  background: #dadada;
+  padding: 1em;
+  /*float: left;*/
+  border-radius: 5px;
+  margin-bottom: 1em;
+  display: block;
+}
+
+div.instructions div span.httpVerb{
+  display: block;
+  float: left;
+  font-size: 0.8em;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 3px 7px;
+  margin-right: 1em;
+  font-weight: 800;
+}
+
+@media all and (max-width: 1280px){
+  main{
+    width: 100%;
+  }
 }
